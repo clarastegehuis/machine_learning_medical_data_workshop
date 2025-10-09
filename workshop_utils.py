@@ -91,11 +91,16 @@ def upload_and_process_image():
         environment = "Google Colab"
     except ImportError:
         IN_COLAB = False
-        # Check if we're in JupyterHub/JupyterLab
+        # Check if we're in Binder or other Jupyter environment
         try:
             from IPython import get_ipython
             if get_ipython() and 'IPKernelApp' in get_ipython().config:
-                environment = "JupyterHub/JupyterLab"
+                # Check if we're specifically in Binder
+                import os
+                if 'BINDER_SERVICE_HOST' in os.environ or 'BINDER_URL' in os.environ:
+                    environment = "Binder"
+                else:
+                    environment = "Jupyter (Local/Hub/Lab)"
             else:
                 environment = "Local Python"
         except:
@@ -115,18 +120,65 @@ def upload_and_process_image():
             print("❌ Geen foto geüpload")
             return None
             
-    elif environment == "JupyterHub/JupyterLab":
-        # JupyterHub/Lab upload widget
-        print("🎯 JupyterHub/Lab gedetecteerd - Upload widget wordt gestart...")
+    elif environment == "Binder":
+        # Binder environment with optimized upload
+        print("🚀 Binder gedetecteerd - Upload widget wordt gestart...")
         
         try:
             import ipywidgets as widgets
             from IPython.display import display, clear_output
             import time
             
-            # Create upload widget
+            # Create upload widget optimized for Binder
             upload_widget = widgets.FileUpload(
                 accept='image/*',  # Only accept image files
+                multiple=False,
+                description='📤 Upload Photo',
+                style={'description_width': 'initial'},
+                layout=widgets.Layout(width='320px')
+            )
+            
+            print("📤 Gebruik de upload widget hieronder (Binder-optimized):")
+            display(upload_widget)
+            
+            # Wait for upload with longer timeout for Binder
+            print("⏳ Wachten op upload... (max 20 seconden)")
+            for i in range(100):  # Wait up to 20 seconds for Binder
+                if upload_widget.value:
+                    uploaded_file = upload_widget.value[0]
+                    filename = uploaded_file['metadata']['name']
+                    file_content = uploaded_file['content']
+                    
+                    print(f"✅ Foto '{filename}' geüpload via Binder widget!")
+                    return process_uploaded_file(file_content, filename)
+                time.sleep(0.2)
+            
+            print("⏰ Upload timeout - probeer handmatige methode hieronder")
+            return try_manual_upload()
+            
+        except ImportError:
+            print("❌ ipywidgets niet beschikbaar in Binder!")
+            print("💡 Zorg dat requirements.txt in je repository staat:")
+            print("   - numpy>=1.21.0")
+            print("   - matplotlib>=3.5.0") 
+            print("   - torch>=1.12.0")
+            print("   - Pillow>=8.3.0")
+            print("   - ipywidgets>=7.6.0")
+            print("🔄 Herstart Binder na toevoegen requirements.txt")
+            return try_manual_upload()
+    
+    elif environment.startswith("Jupyter"):
+        # Other Jupyter environments (Hub/Lab/Local)
+        print("💻 Jupyter omgeving gedetecteerd - Upload widget beschikbaar...")
+        
+        try:
+            import ipywidgets as widgets
+            from IPython.display import display, clear_output
+            import time
+            
+            # Create standard upload widget
+            upload_widget = widgets.FileUpload(
+                accept='image/*',
                 multiple=False,
                 description='Upload Image',
                 style={'description_width': 'initial'},
@@ -136,15 +188,15 @@ def upload_and_process_image():
             print("📤 Gebruik de upload widget hieronder:")
             display(upload_widget)
             
-            # Wait for upload with timeout
+            # Standard timeout for other Jupyter environments
             print("⏳ Wachten op upload... (max 15 seconden)")
-            for i in range(75):  # Wait up to 15 seconds
+            for i in range(75):
                 if upload_widget.value:
                     uploaded_file = upload_widget.value[0]
                     filename = uploaded_file['metadata']['name']
                     file_content = uploaded_file['content']
                     
-                    print(f"✅ Foto '{filename}' geüpload via JupyterHub/Lab widget!")
+                    print(f"✅ Foto '{filename}' geüpload via Jupyter widget!")
                     return process_uploaded_file(file_content, filename)
                 time.sleep(0.2)
             
@@ -194,10 +246,11 @@ def process_uploaded_file(file_content, filename):
 def try_manual_upload():
     """Fallback method for manual file upload"""
     print("📁 Handmatige upload opties:")
-    print("   1. 🖱️  Sleep een foto naar JupyterHub/Lab file browser")
-    print("   2. 📂 Upload via menu: File → Upload Files")
-    print("   3. 💾 Zet een foto in dezelfde map als de notebook")
-    print("   4. 🔄 Herstart deze cel nadat je een foto hebt toegevoegd")
+    print("   1. 🖱️  Sleep een foto naar de file browser (links)")
+    print("   2. 📂 Upload via menu: File → Upload Files") 
+    print("   3. � Binder: Gebruik de Upload knop in de interface")
+    print("   4. �💾 Zet een foto in dezelfde map als de notebook")
+    print("   5. 🔄 Herstart deze cel nadat je een foto hebt toegevoegd")
     
     # Check for recently added files
     import os

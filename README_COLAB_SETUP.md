@@ -1,4 +1,70 @@
-# 🎨 Convolutie Workshop - Setup Instructies
+# 🎨 Co## 🌍 Ondersteunde Platforms
+Deze workshop## 🚀 Binder Setup
+
+### Binder Launch Badge:
+Voeg deze badge toe aan je README voor eenvoudige Binder launch:
+```markdown
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/JOUW_USERNAME/JOUW_REPO/main?filepath=workshop_convolutie_geen_ai.ipynb)
+```
+
+### Foto Upload in Binder:
+1. **Upload Widget**: Automatisch gedetecteerd, langere timeout voor cloud gebruik
+2. **File Browser**: Sleep bestanden naar de interface links
+3. **Upload Knop**: Gebruik de Upload knop in Binder's interface
+4. **Directe load**: `load_alternative_image('filename.jpg')`
+
+### Binder Requirements:
+**BELANGRIJK**: Voeg een `requirements.txt` bestand toe aan je repository:
+```
+numpy>=1.21.0
+matplotlib>=3.5.0
+torch>=1.12.0
+torchvision>=0.13.0
+Pillow>=8.3.0
+ipywidgets>=7.6.0
+jupyter>=1.0.0
+```
+
+**Zonder `requirements.txt` werkt de workshop niet in Binder!**
+
+**Alternatief**: Voor conda-gebruikers, voeg `environment.yml` toe:
+```yaml
+name: convolution-workshop
+channels:
+  - pytorch
+  - conda-forge
+dependencies:
+  - python>=3.8
+  - numpy>=1.21.0
+  - matplotlib>=3.5.0
+  - pytorch>=1.12.0
+  - pillow>=8.3.0
+  - ipywidgets>=7.6.0
+  - jupyter>=1.0.0
+```
+
+### Binder Setup Steps:
+1. **Kies één**: Voeg `requirements.txt` OF `environment.yml` toe aan repository root
+2. Commit en push naar GitHub  
+3. **Eerste launch**: Wacht ~5-10 minuten voor Binder build
+4. **Daarna**: Snelle launches (~30 seconden)
+5. Packages worden automatisch geïnstalleerd bij Binder start
+
+## 💻 Lokale Jupyter Setup
+
+### Vereisten:
+- `ipywidgets` geïnstalleerd voor upload functionaliteit
+- Anders valt het terug op handmatige file upload
+
+### Installatie ipywidgets (indien nodig):
+```bash
+pip install ipywidgets
+# Of in notebook cel:
+!pip install ipywidgets
+```*Google Colab** - Automatische file upload
+- ✅ **Binder** - Upload widget geoptimaliseerd voor cloud gebruik  
+- ✅ **JupyterHub/Lab** - Upload widget met ipywidgets
+- ✅ **Lokaal Jupyter** - Handmatige file methodenie Workshop - Setup Instructies
 
 ## 📁 Bestanden in deze workshop:
 - `workshop_convolutie_geen_ai.ipynb` - Hoofdnotebook voor leerlingen
@@ -73,15 +139,29 @@ pip install ipywidgets
 - Repository moet publiek zijn
 - GitHub URLs moeten naar 'raw' content wijzen
 
-### ❌ Upload widget werkt niet in JupyterHub/Lab:
+### ❌ Upload widget werkt niet in Binder:
+- **Vereist**: `requirements.txt` in je repository voor package installatie
+- Binder installeert ipywidgets automatisch uit requirements.txt
+- Gebruik Upload knop in Binder interface als alternatief
+- Sleep foto's naar file browser links
+- Herstart kernel indien nodig
+
+### ❌ Foto upload timeout in Binder:
+- Binder heeft langere timeout (20 sec) voor cloud gebruik
+- Probeer kleinere foto's (<5MB) voor snellere upload
+- Gebruik `load_alternative_image('filename.jpg')` direct
+- Upload eerst via file browser, dan load met filename
+
+### ❌ "ModuleNotFoundError" in Binder:
+- **Oorzaak**: Geen `requirements.txt` in repository
+- **Oplossing**: Voeg `requirements.txt` toe aan repository root
+- **Let op**: Binder rebuild duurt 5-10 minuten na eerste wijziging
+- **Check**: Repository moet publiek zijn voor Binder toegang
+
+### ❌ Upload widget werkt niet in lokale Jupyter:
 - Installeer ipywidgets: `pip install ipywidgets`
 - Herstart de kernel na installatie
 - Gebruik handmatige upload als alternatief
-
-### ❌ Foto upload timeout in JupyterHub/Lab:
-- Probeer kleinere foto's (<5MB)
-- Gebruik `load_alternative_image('filename.jpg')` direct
-- Sleep foto naar file browser en herstart upload cel
 
 ### ❌ Import errors:
 - Zorg dat beide bestanden in dezelfde directory staan
