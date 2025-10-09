@@ -5,7 +5,14 @@
 - `workshop_utils.py` - Technische functies (automatisch geladen)
 - `README.md` - Deze instructies
 
-## 🌐 Google Colab Setup
+## � Ondersteunde Platforms
+Deze workshop werkt op:
+- ✅ **Google Colab** - Automatische file upload
+- ✅ **JupyterHub** - Upload widget met ipywidgets  
+- ✅ **JupyterLab** - Upload widget met ipywidgets
+- ✅ **Lokaal Jupyter** - Handmatige file methoden
+
+## �🌐 Google Colab Setup
 
 ### Stap 1: GitHub Repository
 1. **Upload beide bestanden** naar je GitHub repository
@@ -36,7 +43,25 @@ jupyter notebook workshop_convolutie_geen_ai.ipynb
 3. Voer de eerste cellen uit
 4. Controleer of `workshop_utils.py` wordt gedownload
 
-## 🔧 Troubleshooting
+## �️ JupyterHub/JupyterLab Setup
+
+### Vereisten:
+- `ipywidgets` geïnstalleerd voor upload functionaliteit
+- Anders valt het terug op handmatige file upload
+
+### Foto Upload Opties:
+1. **Automatisch**: Upload widget verschijnt bij `upload_and_process_image()`
+2. **Handmatig**: Sleep bestanden naar file browser
+3. **Directe load**: Gebruik `load_alternative_image('filename.jpg')`
+
+### Installatie ipywidgets (indien nodig):
+```bash
+pip install ipywidgets
+# Of in notebook cel:
+!pip install ipywidgets
+```
+
+## �🔧 Troubleshooting
 
 ### ❌ "Module niet gevonden" error in Colab:
 - Controleer of `workshop_utils.py` in je repository staat
@@ -47,6 +72,16 @@ jupyter notebook workshop_convolutie_geen_ai.ipynb
 - Controleer internetverbinding
 - Repository moet publiek zijn
 - GitHub URLs moeten naar 'raw' content wijzen
+
+### ❌ Upload widget werkt niet in JupyterHub/Lab:
+- Installeer ipywidgets: `pip install ipywidgets`
+- Herstart de kernel na installatie
+- Gebruik handmatige upload als alternatief
+
+### ❌ Foto upload timeout in JupyterHub/Lab:
+- Probeer kleinere foto's (<5MB)
+- Gebruik `load_alternative_image('filename.jpg')` direct
+- Sleep foto naar file browser en herstart upload cel
 
 ### ❌ Import errors:
 - Zorg dat beide bestanden in dezelfde directory staan
