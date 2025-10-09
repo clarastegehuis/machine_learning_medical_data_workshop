@@ -84,164 +84,59 @@ def resize_image_smart(img, max_pixels=50000):
 def upload_and_process_image():
     """Upload een foto en zet hem om naar zwart-wit voor convolutie experimenten"""
     
-    # Detect environment
     try:
         from google.colab import files
         IN_COLAB = True
-        environment = "Google Colab"
     except ImportError:
         IN_COLAB = False
-        # Check if we're in Binder or other Jupyter environment
-        try:
-            from IPython import get_ipython
-            if get_ipython() and 'IPKernelApp' in get_ipython().config:
-                # Check if we're specifically in Binder
-                import os
-                if 'BINDER_SERVICE_HOST' in os.environ or 'BINDER_URL' in os.environ:
-                    environment = "Binder"
-                else:
-                    environment = "Jupyter (Local/Hub/Lab)"
-            else:
-                environment = "Local Python"
-        except:
-            environment = "Local Python"
-    
-    print(f"🌍 Environment detected: {environment}")
     
     if IN_COLAB:
-        # Google Colab upload method
         print("📤 Klik op 'Choose Files' om je foto te uploaden...")
         uploaded = files.upload()
         
         if uploaded:
+            # Neem de eerste geüploade foto
             filename = list(uploaded.keys())[0]
-            return process_uploaded_file(uploaded[filename], filename)
+            print(f"✅ Foto '{filename}' succesvol geüpload!")
+            
+            try:
+                # Open en converteer naar zwart-wit
+                img = Image.open(io.BytesIO(uploaded[filename]))
+                img_gray = np.array(img.convert('L'))
+                
+                print(f"� Foto omgezet naar zwart-wit ({img_gray.shape[0]}x{img_gray.shape[1]} pixels)")
+                
+                # Verkleein de afbeelding voor betere performance
+                img_gray = resize_image_smart(img_gray, max_pixels=50000)
+                
+                # Laat de originele en verwerkte versie zien
+                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+                
+                ax1.imshow(img)
+                ax1.set_title("� Originele Foto")
+                ax1.axis('off')
+                
+                ax2.imshow(img_gray, cmap='gray')
+                ax2.set_title("⚫⚪ Zwart-Wit Versie (Verkleind)")
+                ax2.axis('off')
+                
+                plt.tight_layout()
+                plt.show()
+                
+                return img_gray
+                
+            except Exception as e:
+                print(f"❌ Fout bij verwerken foto: {e}")
+                return None
         else:
             print("❌ Geen foto geüpload")
             return None
-            
-    elif environment == "Binder":
-        # Binder environment with optimized upload
-        print("🚀 Binder gedetecteerd - Upload widget wordt gestart...")
-        
-        try:
-            import ipywidgets as widgets
-            from IPython.display import display, clear_output
-            import time
-            
-            # Create upload widget optimized for Binder
-            upload_widget = widgets.FileUpload(
-                accept='image/*',  # Only accept image files
-                multiple=False,
-                description='📤 Upload Photo',
-                style={'description_width': 'initial'},
-                layout=widgets.Layout(width='320px')
-            )
-            
-            print("📤 Gebruik de upload widget hieronder (Binder-optimized):")
-            display(upload_widget)
-            
-            # Wait for upload with longer timeout for Binder
-            print("⏳ Wachten op upload... (max 20 seconden)")
-            for i in range(100):  # Wait up to 20 seconds for Binder
-                if upload_widget.value:
-                    uploaded_file = upload_widget.value[0]
-                    filename = uploaded_file['metadata']['name']
-                    file_content = uploaded_file['content']
-                    
-                    print(f"✅ Foto '{filename}' geüpload via Binder widget!")
-                    return process_uploaded_file(file_content, filename)
-                time.sleep(0.2)
-            
-            print("⏰ Upload timeout - probeer handmatige methode hieronder")
-            return try_manual_upload()
-            
-        except ImportError:
-            print("❌ ipywidgets niet beschikbaar in Binder!")
-            print("💡 Zorg dat requirements.txt in je repository staat:")
-            print("   - numpy>=1.21.0")
-            print("   - matplotlib>=3.5.0") 
-            print("   - torch>=1.12.0")
-            print("   - Pillow>=8.3.0")
-            print("   - ipywidgets>=7.6.0")
-            print("🔄 Herstart Binder na toevoegen requirements.txt")
-            return try_manual_upload()
-    
-    elif environment.startswith("Jupyter"):
-        # Other Jupyter environments (Hub/Lab/Local)
-        print("💻 Jupyter omgeving gedetecteerd - Upload widget beschikbaar...")
-        
-        try:
-            import ipywidgets as widgets
-            from IPython.display import display, clear_output
-            import time
-            
-            # Create standard upload widget
-            upload_widget = widgets.FileUpload(
-                accept='image/*',
-                multiple=False,
-                description='Upload Image',
-                style={'description_width': 'initial'},
-                layout=widgets.Layout(width='300px')
-            )
-            
-            print("📤 Gebruik de upload widget hieronder:")
-            display(upload_widget)
-            
-            # Standard timeout for other Jupyter environments
-            print("⏳ Wachten op upload... (max 15 seconden)")
-            for i in range(75):
-                if upload_widget.value:
-                    uploaded_file = upload_widget.value[0]
-                    filename = uploaded_file['metadata']['name']
-                    file_content = uploaded_file['content']
-                    
-                    print(f"✅ Foto '{filename}' geüpload via Jupyter widget!")
-                    return process_uploaded_file(file_content, filename)
-                time.sleep(0.2)
-            
-            print("⏰ Upload timeout - probeer handmatige methode hieronder")
-            return try_manual_upload()
-            
-        except ImportError:
-            print("⚠️ ipywidgets niet beschikbaar - probeer handmatige upload")
-            return try_manual_upload()
-            
     else:
-        # Local environment
-        return try_manual_upload()
-
-def process_uploaded_file(file_content, filename):
-    """Process uploaded file content into grayscale image"""
-    try:
-        # Open en converteer naar zwart-wit
-        img = Image.open(io.BytesIO(file_content))
-        img_gray = np.array(img.convert('L'))
-        
-        print(f"🔄 Foto omgezet naar zwart-wit ({img_gray.shape[0]}x{img_gray.shape[1]} pixels)")
-        
-        # Verkleein de afbeelding voor betere performance
-        img_gray = resize_image_smart(img_gray, max_pixels=50000)
-        
-        # Laat de originele en verwerkte versie zien
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-        
-        ax1.imshow(img)
-        ax1.set_title("📸 Originele Foto")
-        ax1.axis('off')
-        
-        ax2.imshow(img_gray, cmap='gray')
-        ax2.set_title("⚫⚪ Zwart-Wit Versie (Verkleind)")
-        ax2.axis('off')
-        
-        plt.tight_layout()
-        plt.show()
-        
-        return img_gray
-        
-    except Exception as e:
-        print(f"❌ Fout bij verwerken foto: {e}")
+        print("💻 File upload werkt alleen in Google Colab")
+        print("📁 Je kunt wel een lokaal bestand pad opgeven")
         return None
+
+
 
 def try_manual_upload():
     """Fallback method for manual file upload"""
