@@ -93,7 +93,7 @@ In de notebook, verander deze regel in cel 1:
 ### Stap 3: GitHub URL aanpassen  
 In cel 6, verander deze regel:
 ```python
-utils_url = "https://raw.githubusercontent.com/JOUW_USERNAME/JOUW_REPO/main/workshop_utils.py"
+utils_url = "https://raw.githubusercontent.com/clarastegehuis/machine_learning_medical_data/main/workshop_utils.py"
 ```
 
 ## 🧪 Testen
