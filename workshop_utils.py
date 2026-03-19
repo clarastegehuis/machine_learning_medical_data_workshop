@@ -5,12 +5,29 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-import torch
-import torch.nn.functional as F
 from PIL import Image
 from IPython.display import display, clear_output
 import io
 import base64
+
+def conv2d_same_np(image, kernel):
+    """2D convolutie met 'same' output-grootte, puur met NumPy."""
+    image = np.asarray(image, dtype=np.float32)
+    kernel = np.asarray(kernel, dtype=np.float32)
+
+    kh, kw = kernel.shape
+    pad_h, pad_w = kh // 2, kw // 2
+
+    padded = np.pad(image, ((pad_h, pad_h), (pad_w, pad_w)), mode='edge')
+    flipped = np.flip(kernel)
+    out = np.zeros_like(image, dtype=np.float32)
+
+    for y in range(image.shape[0]):
+        for x in range(image.shape[1]):
+            patch = padded[y:y+kh, x:x+kw]
+            out[y, x] = np.sum(patch * flipped)
+
+    return out
 
 def open_img(path):
     """Open een afbeelding van verschillende formaten"""
@@ -82,59 +99,78 @@ def resize_image_smart(img, max_pixels=50000):
     return resized_img
 
 def upload_and_process_image():
-    """Upload een foto en zet hem om naar zwart-wit voor convolutie experimenten"""
-    
-    try:
-        from google.colab import files
-        IN_COLAB = True
-    except ImportError:
-        IN_COLAB = False
-    
-    if IN_COLAB:
-        print("📤 Klik op 'Choose Files' om je foto te uploaden...")
-        uploaded = files.upload()
-        
-        if uploaded:
-            # Neem de eerste geüploade foto
-            filename = list(uploaded.keys())[0]
-            print(f"✅ Foto '{filename}' succesvol geüpload!")
-            
-            try:
-                # Open en converteer naar zwart-wit
-                img = Image.open(io.BytesIO(uploaded[filename]))
-                img_gray = np.array(img.convert('L'))
-                
-                print(f"� Foto omgezet naar zwart-wit ({img_gray.shape[0]}x{img_gray.shape[1]} pixels)")
-                
-                # Verkleein de afbeelding voor betere performance
-                img_gray = resize_image_smart(img_gray, max_pixels=50000)
-                
-                # Laat de originele en verwerkte versie zien
-                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-                
-                ax1.imshow(img)
-                ax1.set_title("� Originele Foto")
-                ax1.axis('off')
-                
-                ax2.imshow(img_gray, cmap='gray')
-                ax2.set_title("⚫⚪ Zwart-Wit Versie (Verkleind)")
-                ax2.axis('off')
-                
-                plt.tight_layout()
-                plt.show()
-                
-                return img_gray
-                
-            except Exception as e:
-                print(f"❌ Fout bij verwerken foto: {e}")
-                return None
-        else:
-            print("❌ Geen foto geüpload")
-            return None
+    """Laad een foto uit de huidige map en zet hem om naar zwart-wit."""
+    import os
+    import sys
+
+    is_jupyterlite = "pyodide" in sys.modules
+
+    if is_jupyterlite:
+        print("🌐 JupyterLite gedetecteerd")
+        print("📁 Upload eerst een foto via de file browser links.")
+        print("⌨️ Geef daarna de bestandsnaam hieronder op (bijv. foto.jpg).")
     else:
-        print("💻 File upload werkt alleen in Google Colab")
-        print("📁 Je kunt wel een lokaal bestand pad opgeven")
-        return None
+        print("💻 Lokale Jupyter omgeving gedetecteerd")
+        print("📁 Zorg dat je foto in dezelfde map staat als deze notebook.")
+
+    manual_filename = ""
+    try:
+        manual_filename = input("Bestandsnaam (Enter om over te slaan): ").strip()
+    except Exception:
+        manual_filename = ""
+
+    candidate_files = []
+    if manual_filename:
+        candidate_files.append(manual_filename)
+
+    candidate_files.extend([
+        "chess.jpg",
+        "foto.jpg",
+        "image.png",
+        "woman.jpg",
+    ])
+
+    checked = set()
+    for filename in candidate_files:
+        if filename in checked:
+            continue
+        checked.add(filename)
+
+        if not os.path.exists(filename):
+            continue
+
+        try:
+            img = Image.open(filename)
+            img_gray = np.array(img.convert('L'))
+
+            print(f"✅ Foto '{filename}' geladen!")
+            print(f"📷 Foto omgezet naar zwart-wit ({img_gray.shape[0]}x{img_gray.shape[1]} pixels)")
+
+            # Verklein de afbeelding voor betere performance
+            img_gray = resize_image_smart(img_gray, max_pixels=50000)
+
+            # Laat de originele en verwerkte versie zien
+            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+
+            ax1.imshow(img)
+            ax1.set_title("📸 Originele Foto")
+            ax1.axis('off')
+
+            ax2.imshow(img_gray, cmap='gray')
+            ax2.set_title("⚫⚪ Zwart-Wit Versie (Verkleind)")
+            ax2.axis('off')
+
+            plt.tight_layout()
+            plt.show()
+
+            return img_gray
+
+        except Exception as e:
+            print(f"❌ Fout bij verwerken van '{filename}': {e}")
+
+    print("❌ Geen bruikbare foto gevonden.")
+    print("💡 Upload een bestand en gebruik bijvoorbeeld: load_alternative_image('jouw_foto.jpg')")
+    return None
 
 
 
@@ -143,8 +179,8 @@ def try_manual_upload():
     print("📁 Handmatige upload opties:")
     print("   1. 🖱️  Sleep een foto naar de file browser (links)")
     print("   2. 📂 Upload via menu: File → Upload Files") 
-    print("   3. � Binder: Gebruik de Upload knop in de interface")
-    print("   4. �💾 Zet een foto in dezelfde map als de notebook")
+    print("   3. 🌐 JupyterLite: Upload via de file browser links")
+    print("   4. 💾 Zet een foto in dezelfde map als de notebook")
     print("   5. 🔄 Herstart deze cel nadat je een foto hebt toegevoegd")
     
     # Check for recently added files
@@ -207,11 +243,12 @@ def apply_conv(image, kernel, iter=1, title_prefix="Filter Effect"):
     - iter: Hoe vaak het effect toegepast wordt
     - title_prefix: Naam van het effect
     """
-    image, kernel = torch.from_numpy(image).float(), torch.from_numpy(kernel).float()
+    image = np.asarray(image, dtype=np.float32)
+    kernel = np.asarray(kernel, dtype=np.float32)
     img_shape, kernel_shape = image.shape, kernel.shape
     
     # Bepaal automatisch een goede clim op basis van de afbeelding
-    original_min, original_max = image.min().item(), image.max().item()
+    original_min, original_max = float(image.min()), float(image.max())
     
     fig, ax = plt.subplots(1, 1, figsize=(10, 8))
     
@@ -221,13 +258,11 @@ def apply_conv(image, kernel, iter=1, title_prefix="Filter Effect"):
     
     for level in range(iter):
         # Pas convolutie toe
-        image = F.conv2d(image.reshape(1, 1, img_shape[0], img_shape[1]),
-                         kernel.reshape(1, 1, kernel_shape[0], kernel_shape[1]),
-                         padding='same').squeeze()
+        image = conv2d_same_np(image, kernel)
         
         # Update de display
         ax.clear()
-        ax.imshow(image.numpy(), cmap='gray', clim=[original_min, original_max])
+        ax.imshow(image, cmap='gray', clim=[original_min, original_max])
         ax.set_title(f'⚡ {title_prefix} - Stap {level+1}/{iter}', fontsize=16)
         ax.axis('off')
         
@@ -240,10 +275,10 @@ def apply_conv(image, kernel, iter=1, title_prefix="Filter Effect"):
     
     if iter>1:
         # Laat het eindresultaat nog een keer zien
-        final_result = image.numpy()
+        final_result = image
         visualize(final_result, f"Eindresultaat: {title_prefix}")
     
-    return image.numpy()
+    return image
 
 def show_kernel(kernel, title="Kernel"):
     """Laat een kernel mooi zien"""
@@ -288,11 +323,7 @@ def create_filter_gallery(image):
             vmin, vmax = image.min(), image.max()
         else:
             # Maak elke keer een NIEUWE copy van de originele afbeelding
-            image_tensor = torch.from_numpy(image.copy()).float()
-            kernel_tensor = torch.from_numpy(kernel).float()
-            result = F.conv2d(image_tensor.reshape(1, 1, *image_tensor.shape),
-                            kernel_tensor.reshape(1, 1, *kernel.shape),
-                            padding='same').squeeze().numpy()
+            result = conv2d_same_np(image.copy(), kernel)
             
             # Bepaal de juiste colormap range voor dit filter type
             if "Edge" in name or name == "Emboss":

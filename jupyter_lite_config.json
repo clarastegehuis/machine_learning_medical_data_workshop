@@ -1,0 +1,14 @@
+{
+  "LiteBuildConfig": {
+    "contents": [
+      "workshop_convolutie_geen_ai_jupyterlite.ipynb",
+      "workshop_utils.py",
+      "chess.jpg",
+      "woman.jpg"
+    ],
+    "output_dir": "dist"
+  },
+  "jupyter-config-data": {
+    "appName": "Convolutie Workshop (JupyterLite)"
+  }
+}
