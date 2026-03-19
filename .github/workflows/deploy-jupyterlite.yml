@@ -37,6 +37,13 @@ jobs:
         run: |
           jupyter lite build --config jupyter_lite_config.json --output-dir dist
 
+      - name: Copy notebooks and assets to dist
+        run: |
+          cp workshop_convolutie_geen_ai_jupyterlite.ipynb dist/
+          cp workshop_utils.py dist/
+          cp chess.jpg dist/ || true
+          cp woman.jpg dist/ || true
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 

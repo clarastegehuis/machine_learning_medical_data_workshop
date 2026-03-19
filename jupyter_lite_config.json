@@ -1,8 +1,10 @@
 {
-  "contents": [
-    "workshop_convolutie_geen_ai_jupyterlite.ipynb",
-    "workshop_utils.py",
-    "chess.jpg",
-    "woman.jpg"
-  ]
+  "jupyter-config-data": {
+    "appName": "Convolutie Workshop"
+  },
+  "settingsOverrides": {
+    "@jupyterlab/apputils-extension:themes": {
+      "theme": "JupyterLab Light"
+    }
+  }
 }
