@@ -37,6 +37,7 @@ jobs:
         run: |
           rm -rf files
           mkdir -p files
+          cp welkom.ipynb files/
           cp workshop_convolutie_geen_ai_jupyterlite.ipynb files/
           cp workshop_utils.py files/
           cp chess.jpg files/ || true
