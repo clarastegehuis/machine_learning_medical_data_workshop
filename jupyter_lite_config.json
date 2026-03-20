@@ -1,4 +1,10 @@
 {
+  "LiteBuildConfig": {
+    "contents": [
+      "files"
+    ],
+    "output_dir": "dist"
+  },
   "jupyter-config-data": {
     "appName": "Convolutie Workshop"
   },
