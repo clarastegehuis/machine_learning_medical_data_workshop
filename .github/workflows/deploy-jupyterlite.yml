@@ -245,28 +245,28 @@ jobs:
                     Gebruik de welkomstnotebook als startpunt, of ga meteen naar de workshopnotebook als je direct wilt beginnen.
                   </p>
                   <div class="actions">
-                    <a class="button button-primary" href="./lab/tree/welkom.ipynb?reset">Open welkomstpagina</a>
-                    <a class="button button-secondary" href="./lab/tree/workshop_convolutie_geen_ai_jupyterlite.ipynb?reset">Open workshop direct</a>
+                    <a class="button button-primary" href="./lab/index.html">Open JupyterLite</a>
+                    <a class="button button-secondary" href="./lab/index.html">Open workshopomgeving</a>
                   </div>
                 </div>
                 <div class="content">
                   <div class="section">
                     <h2>Zo begin je</h2>
                     <ol>
-                      <li>Open eerst de welkomstpagina als je kort wilt lezen hoe de workshop is opgebouwd.</li>
-                      <li>Open daarna de workshopnotebook en werk van boven naar beneden.</li>
-                      <li>Voer codecellen uit met Shift+Enter.</li>
+                      <li>Klik op een van de knoppen om JupyterLite te openen.</li>
+                      <li>Als de welkomstnotebook niet automatisch opent, klik links op <strong>welkom.ipynb</strong>.</li>
+                      <li>Open daarna <strong>workshop_convolutie_geen_ai_jupyterlite.ipynb</strong> en werk van boven naar beneden.</li>
                     </ol>
                     <div class="note">
-                      <strong>Tip:</strong> als een notebook niet direct zichtbaar lijkt, wacht dan even tot JupyterLite volledig geladen is.
+                      <strong>Belangrijk:</strong> GitHub Pages kan geen JupyterLab-bestandsroutes zoals <strong>/lab/tree/...</strong> rechtstreeks serveren, daarom openen de knoppen eerst de JupyterLite-app zelf.
                     </div>
                   </div>
                   <div class="section">
                     <h2>Wat staat waar?</h2>
                     <ul>
-                      <li>De welkomstpagina legt kort uit waar je moet klikken.</li>
-                      <li>De workshopnotebook bevat de volledige les en opdrachten.</li>
-                      <li>Alles draait lokaal in de browser; er is geen aparte Python-installatie nodig.</li>
+                      <li>JupyterLite opent via de bestaande statische pagina <strong>/lab/index.html</strong>.</li>
+                      <li>De welkomstnotebook heet <strong>welkom.ipynb</strong>.</li>
+                      <li>De workshopnotebook heet <strong>workshop_convolutie_geen_ai_jupyterlite.ipynb</strong>.</li>
                     </ul>
                   </div>
                 </div>
