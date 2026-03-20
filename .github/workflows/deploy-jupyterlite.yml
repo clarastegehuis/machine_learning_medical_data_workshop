@@ -47,6 +47,235 @@ jobs:
         run: |
           jupyter lite build --config jupyter_lite_config.json --output-dir dist
 
+      - name: Force root redirect to welcome notebook
+        run: |
+          cat > dist/index.html <<'EOF'
+          <!DOCTYPE html>
+          <html lang="nl">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>Convolutie Workshop</title>
+            <style>
+              :root {
+                color-scheme: light;
+                --bg: #f6efe4;
+                --panel: rgba(255, 252, 247, 0.92);
+                --ink: #18222f;
+                --muted: #5e6a78;
+                --accent: #c84c2a;
+                --accent-dark: #98361d;
+                --line: rgba(24, 34, 47, 0.08);
+                --shadow: 0 24px 80px rgba(64, 39, 25, 0.14);
+              }
+
+              * {
+                box-sizing: border-box;
+              }
+
+              body {
+                margin: 0;
+                font-family: "Segoe UI", "Aptos", sans-serif;
+                color: var(--ink);
+                background:
+                  radial-gradient(circle at top left, rgba(255, 188, 121, 0.45), transparent 32%),
+                  radial-gradient(circle at bottom right, rgba(244, 115, 84, 0.22), transparent 28%),
+                  linear-gradient(135deg, #f5ead8 0%, #f7f2ea 48%, #efe4d5 100%);
+                min-height: 100vh;
+              }
+
+              main {
+                width: min(960px, calc(100% - 32px));
+                margin: 0 auto;
+                padding: 48px 0 64px;
+              }
+
+              .panel {
+                background: var(--panel);
+                border: 1px solid var(--line);
+                border-radius: 28px;
+                box-shadow: var(--shadow);
+                overflow: hidden;
+                backdrop-filter: blur(10px);
+              }
+
+              .hero {
+                padding: 48px 32px 28px;
+                background:
+                  linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(255, 248, 240, 0.68)),
+                  linear-gradient(120deg, rgba(200, 76, 42, 0.08), rgba(255, 188, 121, 0.16));
+              }
+
+              .eyebrow {
+                display: inline-block;
+                padding: 8px 12px;
+                border-radius: 999px;
+                background: rgba(200, 76, 42, 0.1);
+                color: var(--accent-dark);
+                font-size: 0.9rem;
+                font-weight: 700;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+              }
+
+              h1 {
+                margin: 18px 0 14px;
+                font-size: clamp(2.2rem, 5vw, 4.4rem);
+                line-height: 0.98;
+                max-width: 12ch;
+              }
+
+              .intro {
+                max-width: 58ch;
+                font-size: 1.08rem;
+                line-height: 1.7;
+                color: var(--muted);
+              }
+
+              .actions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 14px;
+                margin-top: 28px;
+              }
+
+              .button {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 52px;
+                padding: 0 20px;
+                border-radius: 16px;
+                text-decoration: none;
+                font-weight: 700;
+                transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+              }
+
+              .button:hover {
+                transform: translateY(-1px);
+              }
+
+              .button-primary {
+                color: #fff;
+                background: linear-gradient(135deg, var(--accent), #de6b2b);
+                box-shadow: 0 14px 28px rgba(200, 76, 42, 0.28);
+              }
+
+              .button-secondary {
+                color: var(--ink);
+                background: rgba(255, 255, 255, 0.85);
+                border: 1px solid rgba(24, 34, 47, 0.1);
+              }
+
+              .content {
+                display: grid;
+                grid-template-columns: 1.2fr 0.8fr;
+                gap: 0;
+                border-top: 1px solid var(--line);
+              }
+
+              .section {
+                padding: 28px 32px 34px;
+              }
+
+              .section + .section {
+                border-left: 1px solid var(--line);
+              }
+
+              h2 {
+                margin: 0 0 14px;
+                font-size: 1.15rem;
+              }
+
+              ol,
+              ul {
+                margin: 0;
+                padding-left: 20px;
+                color: var(--muted);
+                line-height: 1.75;
+              }
+
+              li + li {
+                margin-top: 8px;
+              }
+
+              .note {
+                margin-top: 18px;
+                padding: 14px 16px;
+                border-radius: 16px;
+                background: rgba(255, 247, 235, 0.95);
+                border: 1px solid rgba(200, 76, 42, 0.12);
+                color: var(--ink);
+              }
+
+              .note strong {
+                color: var(--accent-dark);
+              }
+
+              @media (max-width: 760px) {
+                main {
+                  width: min(100% - 20px, 960px);
+                  padding: 20px 0 32px;
+                }
+
+                .hero,
+                .section {
+                  padding: 24px 20px;
+                }
+
+                .content {
+                  grid-template-columns: 1fr;
+                }
+
+                .section + .section {
+                  border-left: 0;
+                  border-top: 1px solid var(--line);
+                }
+              }
+            </style>
+          </head>
+          <body>
+            <main>
+              <section class="panel">
+                <div class="hero">
+                  <span class="eyebrow">Machine Learning Workshop</span>
+                  <h1>Convolutie: van filters naar beeldbewerking</h1>
+                  <p class="intro">
+                    Deze GitHub Pages site opent de workshop in JupyterLite, dus alles draait direct in je browser.
+                    Gebruik de welkomstnotebook als startpunt, of ga meteen naar de workshopnotebook als je direct wilt beginnen.
+                  </p>
+                  <div class="actions">
+                    <a class="button button-primary" href="./lab/tree/welkom.ipynb?reset">Open welkomstpagina</a>
+                    <a class="button button-secondary" href="./lab/tree/workshop_convolutie_geen_ai_jupyterlite.ipynb?reset">Open workshop direct</a>
+                  </div>
+                </div>
+                <div class="content">
+                  <div class="section">
+                    <h2>Zo begin je</h2>
+                    <ol>
+                      <li>Open eerst de welkomstpagina als je kort wilt lezen hoe de workshop is opgebouwd.</li>
+                      <li>Open daarna de workshopnotebook en werk van boven naar beneden.</li>
+                      <li>Voer codecellen uit met Shift+Enter.</li>
+                    </ol>
+                    <div class="note">
+                      <strong>Tip:</strong> als een notebook niet direct zichtbaar lijkt, wacht dan even tot JupyterLite volledig geladen is.
+                    </div>
+                  </div>
+                  <div class="section">
+                    <h2>Wat staat waar?</h2>
+                    <ul>
+                      <li>De welkomstpagina legt kort uit waar je moet klikken.</li>
+                      <li>De workshopnotebook bevat de volledige les en opdrachten.</li>
+                      <li>Alles draait lokaal in de browser; er is geen aparte Python-installatie nodig.</li>
+                    </ul>
+                  </div>
+                </div>
+              </section>
+            </main>
+          </body>
+          </html>
+          EOF
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
