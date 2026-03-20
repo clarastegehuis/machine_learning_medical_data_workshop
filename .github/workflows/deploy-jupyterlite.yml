@@ -45,11 +45,12 @@ jobs:
 
       - name: Build JupyterLite site
         run: |
-          jupyter lite build --config jupyter_lite_config.json --output-dir dist
+          mkdir -p dist
+          touch dist/.nojekyll
+          jupyter lite build --config jupyter_lite_config.json --output-dir dist/lite
 
-      - name: Force root redirect to welcome notebook
+      - name: Create landing page
         run: |
-          mv dist/index.html dist/app.html
           cat > dist/index.html <<'EOF'
           <!DOCTYPE html>
           <html lang="nl">
@@ -246,8 +247,8 @@ jobs:
                     Gebruik de welkomstnotebook als startpunt, of ga meteen naar de workshopnotebook als je direct wilt beginnen.
                   </p>
                   <div class="actions">
-                    <a class="button button-primary" href="./app.html">Open JupyterLite &rarr;</a>
-                    <a class="button button-secondary" href="./app.html">Open workshopomgeving &rarr;</a>
+                    <a class="button button-primary" href="./lite/">Open welkomstpagina &rarr;</a>
+                    <a class="button button-secondary" href="./lite/">Open workshop direct &rarr;</a>
                   </div>
                 </div>
                 <div class="content">
@@ -255,19 +256,19 @@ jobs:
                     <h2>Zo begin je</h2>
                     <ol>
                       <li>Klik op een van de knoppen om JupyterLite te openen.</li>
-                      <li>Als de welkomstnotebook niet automatisch opent, klik links op <strong>welkom.ipynb</strong>.</li>
-                      <li>Open daarna <strong>workshop_convolutie_geen_ai_jupyterlite.ipynb</strong> en werk van boven naar beneden.</li>
+                      <li>De welkomstnotebook (<strong>welkom.ipynb</strong>) opent automatisch.</li>
+                      <li>Open daarna links in de bestandslijst <strong>workshop_convolutie_geen_ai_jupyterlite.ipynb</strong> en werk van boven naar beneden.</li>
                     </ol>
                     <div class="note">
-                      <strong>Belangrijk:</strong> GitHub Pages kan geen JupyterLab-bestandsroutes zoals <strong>/lab/tree/...</strong> rechtstreeks serveren, daarom openen de knoppen eerst de JupyterLite-app zelf.
+                      <strong>Tip:</strong> voer iedere cel uit met <strong>Shift+Enter</strong>. Begin altijd bovenaan.
                     </div>
                   </div>
                   <div class="section">
                     <h2>Wat staat waar?</h2>
                     <ul>
-                      <li>JupyterLite opent via de bestaande statische pagina <strong>/lab/index.html</strong>.</li>
-                      <li>De welkomstnotebook heet <strong>welkom.ipynb</strong>.</li>
-                      <li>De workshopnotebook heet <strong>workshop_convolutie_geen_ai_jupyterlite.ipynb</strong>.</li>
+                      <li>De welkomstnotebook legt uit hoe je de workshop navigeert.</li>
+                      <li>De workshopnotebook bevat de volledige les en opdrachten.</li>
+                      <li>Alles draait in de browser &mdash; geen Python-installatie nodig.</li>
                     </ul>
                   </div>
                 </div>
