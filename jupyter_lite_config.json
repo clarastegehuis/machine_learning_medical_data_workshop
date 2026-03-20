@@ -4,14 +4,5 @@
       "files"
     ],
     "output_dir": "dist"
-  },
-  "jupyter-config-data": {
-    "appName": "Convolutie Workshop",
-    "defaultPath": "welkom.ipynb"
-  },
-  "settingsOverrides": {
-    "@jupyterlab/apputils-extension:themes": {
-      "theme": "JupyterLab Light"
-    }
   }
 }
