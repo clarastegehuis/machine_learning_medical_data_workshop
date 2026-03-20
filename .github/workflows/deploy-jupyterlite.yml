@@ -49,6 +49,7 @@ jobs:
 
       - name: Force root redirect to welcome notebook
         run: |
+          mv dist/index.html dist/app.html
           cat > dist/index.html <<'EOF'
           <!DOCTYPE html>
           <html lang="nl">
@@ -245,8 +246,8 @@ jobs:
                     Gebruik de welkomstnotebook als startpunt, of ga meteen naar de workshopnotebook als je direct wilt beginnen.
                   </p>
                   <div class="actions">
-                    <a class="button button-primary" href="./lab/index.html">Open JupyterLite</a>
-                    <a class="button button-secondary" href="./lab/index.html">Open workshopomgeving</a>
+                    <a class="button button-primary" href="./app.html">Open JupyterLite &rarr;</a>
+                    <a class="button button-secondary" href="./app.html">Open workshopomgeving &rarr;</a>
                   </div>
                 </div>
                 <div class="content">
