@@ -6,7 +6,8 @@
     "output_dir": "dist"
   },
   "jupyter-config-data": {
-    "appName": "Convolutie Workshop"
+    "appName": "Convolutie Workshop",
+    "defaultPath": "welkom.ipynb"
   },
   "settingsOverrides": {
     "@jupyterlab/apputils-extension:themes": {
